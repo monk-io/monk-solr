@@ -1,0 +1,21 @@
+namespace: solr
+
+solr:
+  defines: runnable
+  metadata:
+    defines: metadata
+    name: solr
+    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
+    tags: self hosted, search platform, 
+    website: https://solr.apache.org/
+    source: https://github.com/apache/solr
+    publisher: "monk.io"
+  containers:
+    defines: containers
+    solr:
+      image:  docker.io/solr
+      image-tag: latest
+      ports:
+        - 8983:8983
+      paths:
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
