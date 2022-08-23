@@ -15,7 +15,8 @@ solr:
     solr:
       image:  docker.io/solr
       image-tag: latest
+      user: "8983"
       ports:
         - 8983:8983
       paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`                           
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
