@@ -14,9 +14,21 @@ solr:
     defines: containers
     solr:
       image:  docker.io/solr
-      image-tag: latest
+      image-tag: <- `${solr-image}`
       user: "8983"
       ports:
         - 8983:8983
       paths:
         - <- `${monk-volume-path}/solr/soldata:/var/solr`
+  files:
+    solr-config:
+      container: solr
+      mode: 0644
+      path: /opt/solr/server/solr/solr.xml
+      contents: <<< files/solr.xml
+  variables:
+    solr-image:
+      value: <- $solr-image-tag
+      type: string      
+
+      
