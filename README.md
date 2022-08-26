@@ -1,4 +1,4 @@
-# Rabbitmq & Solr
+# Monk & Solr
 
 This repository contains Monk.io template to deploy Solr system either locally or on cloud of your choice (AWS, GCP, Azure, Digital Ocean).
 
@@ -55,7 +55,7 @@ You can find configuration file (solr.xml) in `/files` directory in repository a
 
 ## Local Deployment
 
-First clone the repository and change the current directory to the /sonarqube-postgresql folder and simply run below command after launching `monkd`:
+First clone the repository and simply run below command after launching `monkd`:
 :
 
 ```bash
@@ -70,9 +70,8 @@ First clone the repository and change the current directory to the /sonarqube-po
     └─🧩 solr/solr/metadata
 ✔ All templates loaded successfully
 
-➜  monk list rabbitmq
+➜  monk list solr
 
-✔ Got the list
 ✔ Got the list
 Type      Template    Repository  Version  Tags
 runnable  solr/solr   local       -        self hosted, search platform,
@@ -94,7 +93,7 @@ To deploy the above system to your cloud provider, create a new Monk cluster and
 
 ```bash
 ➜  monk cluster new
-? New cluster name mattermost-preview
+? New cluster name solr
 ✔ Cluster created
 Your cluster has been created successfully.
 
@@ -104,7 +103,7 @@ Your cluster has been created successfully.
 ➜  monk cluster grow -p gcp
 ? Cloud provider gcp
 ? Name of the new instance my-instance
-? Tags (split by whitespace) mattermost
+? Tags (split by whitespace) solr
 ? Region europe-central2
 ? Zone europe-central2-a
 ? Instance type e2-medium
@@ -158,24 +157,20 @@ group     solr/stack  local       -        -
 ## Logs & Shell
 
 ```bash
-# show Rabbitmq logs
+# show Solr logs
 ➜  monk logs -l 1000 -f solr/solr
 
-# access shell in the container running Mattermost
+# access shell in the container running Solr
 ➜  monk shell solr/solr
-
-# access shell in the container running Nginx
-➜  monk shell rabbitmq-persistent-volume/nginx
 
 ```
 
 ## Stop, remove and clean up workloads and templates
 
 ```bash
-➜ monk purge -x rabbitmq-persistent-volume/stack rabbitmq-persistent-volume/rabbitmq rabbitmq-persistent-volume/nginx 
+➜ monk purge -x solr/stack solr/solr
 
-✔ rabbitmq-persistent-volume/stack purged
-✔ rabbitmq-persistent-volume/rabbitmq purged
-✔ rabbitmq-persistent-volume/nginx purged
+✔ solr/stack purged
+✔ solr/solr purged
 
 ```
