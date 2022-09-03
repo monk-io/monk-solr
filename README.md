@@ -1,6 +1,6 @@
 ## Monk - Solr
  
 
-* [Monk-Solr](https://github.com/kaganmersin/monk-rabbitmq/tree/main/rabbitmq)
+* [Monk-Solr](https://github.com/kaganmersin/monk-solr/tree/main/solr)
 
-* [Monk-Solr High Available with Zookeper](https://github.com/kaganmersin/monk-rabbitmq/tree/main/rabbitmq-persistent-volume)
+* [Monk-Solr High Available with Zookeper](https://github.com/kaganmersin/monk-solr/tree/main/solr-cluster-with-zookeper)
