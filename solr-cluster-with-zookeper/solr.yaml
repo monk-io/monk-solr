@@ -2,15 +2,6 @@ namespace: solr-zookeeper
 
 solr1:
   defines: runnable
-  metadata:
-    defines: metadata
-    name: solr
-    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
-    tags: self hosted, search platform, 
-    website: https://solr.apache.org/
-    source: https://github.com/apache/solr
-    publisher: "monk.io"
-    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -44,15 +35,6 @@ solr1:
 
 solr2:
   defines: runnable
-  metadata:
-    defines: metadata
-    name: solr
-    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
-    tags: self hosted, search platform, 
-    website: https://solr.apache.org/
-    source: https://github.com/apache/solr
-    publisher: "monk.io"
-    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -86,15 +68,6 @@ solr2:
 
 solr3:
   defines: runnable
-  metadata:
-    defines: metadata
-    name: solr
-    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
-    tags: self hosted, search platform, 
-    website: https://solr.apache.org/
-    source: https://github.com/apache/solr
-    publisher: "monk.io"
-    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -129,16 +102,6 @@ solr3:
 
 zoo1:
   defines: runnable
-  metadata:
-    defines: metadata
-    tags: configuration, services
-    description: Apache ZooKeeper is an effort to develop and maintain an open-source
-      server which enables highly reliable distributed coordination.
-    icon: https://assets.monk.io/icons/zookeeper.gif
-    website: https://zookeeper.apache.org/
-    source: https://github.com/apache/zookeeper
-    name: Apache zookeeper
-    publisher: monk.io  
   containers:
     defines: containers
     zookeeper:
@@ -171,17 +134,7 @@ zoo1:
       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
 
 zoo2:
-  defines: runnable
-  metadata:
-    defines: metadata
-    tags: configuration, services
-    description: Apache ZooKeeper is an effort to develop and maintain an open-source
-      server which enables highly reliable distributed coordination.
-    icon: https://assets.monk.io/icons/zookeeper.gif
-    website: https://zookeeper.apache.org/
-    source: https://github.com/apache/zookeeper
-    name: Apache zookeeper
-    publisher: monk.io    
+  defines: runnable 
   containers:
     defines: containers
     zookeeper:
@@ -216,16 +169,6 @@ zoo2:
 
 zoo3:
   defines: runnable
-  metadata:
-    defines: metadata
-    tags: configuration, services
-    description: Apache ZooKeeper is an effort to develop and maintain an open-source
-      server which enables highly reliable distributed coordination.
-    icon: https://assets.monk.io/icons/zookeeper.gif
-    website: https://zookeeper.apache.org/
-    source: https://github.com/apache/zookeeper
-    name: Apache zookeeper
-    publisher: monk.io    
   containers:
     defines: containers
     zookeeper:
@@ -263,3 +206,4 @@ telnet:
     defines: containers
     zookeeper:
       image:  docker.io/mikesplain/telnet
+      bash: "sleep 9999999"
