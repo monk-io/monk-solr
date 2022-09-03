@@ -10,6 +10,7 @@ solr1:
     website: https://solr.apache.org/
     source: https://github.com/apache/solr
     publisher: "monk.io"
+    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -51,6 +52,7 @@ solr2:
     website: https://solr.apache.org/
     source: https://github.com/apache/solr
     publisher: "monk.io"
+    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -92,6 +94,7 @@ solr3:
     website: https://solr.apache.org/
     source: https://github.com/apache/solr
     publisher: "monk.io"
+    icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
   containers:
     defines: containers
     solr:
@@ -144,6 +147,8 @@ zoo1:
       ports:
         - 2181:2181
         - 7000:7000
+        - 2888:2888
+        - 3888:3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -185,6 +190,8 @@ zoo2:
       ports:
         - 2182:2181
         - 7001:7000
+        - 2889:2888
+        - 3889:3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -227,6 +234,8 @@ zoo3:
       ports:
         - 2183:2181
         - 7002:7000
+        - 2890:2888
+        - 3890:3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -248,4 +257,9 @@ zoo3:
       type: string
       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
 
-                  
+telnet:
+  defines: runnable  
+  containers:
+    defines: containers
+    zookeeper:
+      image:  docker.io/mikesplain/telnet

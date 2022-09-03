@@ -9,6 +9,7 @@ stack:
     - solr-zookeeper/zoo1
     - solr-zookeeper/zoo2
     - solr-zookeeper/zoo3
+    - solr-zookeeper/telnet
   variables:
     solr-image-tag: "latest"
     zookeeper-image-tag: "3.6.2"
