@@ -1,0 +1,14 @@
+namespace: solr-zookeeper
+
+stack:
+  defines: process-group
+  runnable-list:
+    - solr-zookeeper/solr1
+    - solr-zookeeper/solr2
+    - solr-zookeeper/solr3
+    - solr-zookeeper/zoo1
+    - solr-zookeeper/zoo2
+    - solr-zookeeper/zoo3
+  variables:
+    solr-image-tag: "latest"
+    zookeeper-image-tag: "3.6.2"

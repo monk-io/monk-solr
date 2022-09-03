@@ -1,0 +1,251 @@
+namespace: solr-zookeeper
+
+solr1:
+  defines: runnable
+  metadata:
+    defines: metadata
+    name: solr
+    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
+    tags: self hosted, search platform, 
+    website: https://solr.apache.org/
+    source: https://github.com/apache/solr
+    publisher: "monk.io"
+  containers:
+    defines: containers
+    solr:
+      image:  docker.io/solr
+      image-tag: <- `${solr-image}`
+      user: "8983"
+      ports:
+        - 8981:8983
+      paths:
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+  depends:
+    wait-for:
+      runnables:
+        - solr-zookeeper/zoo1 
+        - solr-zookeeper/zoo2
+        - solr-zookeeper/zoo3
+  files:
+    solr-config:
+      container: solr
+      mode: 0644
+      path: /opt/solr/server/solr/solr.xml
+      contents: <<< files/solr.xml
+  variables:
+    solr-image:
+      value: <- $solr-image-tag
+      type: string
+    zk-host:
+      env: ZK_HOST
+      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
+      type: string      
+
+solr2:
+  defines: runnable
+  metadata:
+    defines: metadata
+    name: solr
+    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
+    tags: self hosted, search platform, 
+    website: https://solr.apache.org/
+    source: https://github.com/apache/solr
+    publisher: "monk.io"
+  containers:
+    defines: containers
+    solr:
+      image:  docker.io/solr
+      image-tag: <- `${solr-image}`
+      user: "8983"
+      ports:
+        - 8982:8983
+      paths:
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+  depends:
+    wait-for:
+      runnables:
+        - solr-zookeeper/zoo1 
+        - solr-zookeeper/zoo2
+        - solr-zookeeper/zoo3
+  files:
+    solr-config:
+      container: solr
+      mode: 0644
+      path: /opt/solr/server/solr/solr.xml
+      contents: <<< files/solr.xml
+  variables:
+    solr-image:
+      value: <- $solr-image-tag
+      type: string
+    zk-host:
+      env: ZK_HOST
+      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
+      type: string  
+
+solr3:
+  defines: runnable
+  metadata:
+    defines: metadata
+    name: solr
+    description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
+    tags: self hosted, search platform, 
+    website: https://solr.apache.org/
+    source: https://github.com/apache/solr
+    publisher: "monk.io"
+  containers:
+    defines: containers
+    solr:
+      image:  docker.io/solr
+      image-tag: <- `${solr-image}`
+      user: "8983"
+      ports:
+        - 8983:8983
+      paths:
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+  depends:
+    wait-for:
+      runnables:
+        - solr-zookeeper/zoo1 
+        - solr-zookeeper/zoo2
+        - solr-zookeeper/zoo3
+  files:
+    solr-config:
+      container: solr
+      mode: 0644
+      path: /opt/solr/server/solr/solr.xml
+      contents: <<< files/solr.xml
+  variables:
+    solr-image:
+      value: <- $solr-image-tag
+      type: string
+    zk-host:
+      env: ZK_HOST
+      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
+      type: string  
+
+
+zoo1:
+  defines: runnable
+  metadata:
+    defines: metadata
+    tags: configuration, services
+    description: Apache ZooKeeper is an effort to develop and maintain an open-source
+      server which enables highly reliable distributed coordination.
+    icon: https://assets.monk.io/icons/zookeeper.gif
+    website: https://zookeeper.apache.org/
+    source: https://github.com/apache/zookeeper
+    name: Apache zookeeper
+    publisher: monk.io  
+  containers:
+    defines: containers
+    zookeeper:
+      image:  docker.io/zookeeper
+      image-tag: <- `${zookeeper-image}`
+      ports:
+        - 2181:2181
+        - 7000:7000
+  variables:
+    zookeeper-image:
+      value: <- $zookeeper-image-tag
+      type: string
+    ZOO_MY_ID:
+      env: ZOO_MY_ID
+      type: int
+      value: 1
+    ZOO_SERVERS:
+      env: ZOO_SERVERS
+      type: string
+      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+    ZOO_4LW_COMMANDS_WHITELIST:
+      env: ZOO_4LW_COMMANDS_WHITELIST
+      type: string
+      value: "mntr, conf, ruok"
+    ZOO_CFG_EXTRA:
+      env: ZOO_CFG_EXTRA
+      type: string
+      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+zoo2:
+  defines: runnable
+  metadata:
+    defines: metadata
+    tags: configuration, services
+    description: Apache ZooKeeper is an effort to develop and maintain an open-source
+      server which enables highly reliable distributed coordination.
+    icon: https://assets.monk.io/icons/zookeeper.gif
+    website: https://zookeeper.apache.org/
+    source: https://github.com/apache/zookeeper
+    name: Apache zookeeper
+    publisher: monk.io    
+  containers:
+    defines: containers
+    zookeeper:
+      image:  docker.io/zookeeper
+      image-tag: <- `${zookeeper-image}`
+      ports:
+        - 2182:2181
+        - 7001:7000
+  variables:
+    zookeeper-image:
+      value: <- $zookeeper-image-tag
+      type: string
+    ZOO_MY_ID:
+      env: ZOO_MY_ID
+      type: int
+      value: 2
+    ZOO_SERVERS:
+      env: ZOO_SERVERS
+      type: string
+      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+    ZOO_4LW_COMMANDS_WHITELIST:
+      env: ZOO_4LW_COMMANDS_WHITELIST
+      type: string
+      value: "mntr, conf, ruok"
+    ZOO_CFG_EXTRA:
+      env: ZOO_CFG_EXTRA
+      type: string
+      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+
+zoo3:
+  defines: runnable
+  metadata:
+    defines: metadata
+    tags: configuration, services
+    description: Apache ZooKeeper is an effort to develop and maintain an open-source
+      server which enables highly reliable distributed coordination.
+    icon: https://assets.monk.io/icons/zookeeper.gif
+    website: https://zookeeper.apache.org/
+    source: https://github.com/apache/zookeeper
+    name: Apache zookeeper
+    publisher: monk.io    
+  containers:
+    defines: containers
+    zookeeper:
+      image:  docker.io/zookeeper
+      image-tag: <- `${zookeeper-image}`
+      ports:
+        - 2183:2181
+        - 7002:7000
+  variables:
+    zookeeper-image:
+      value: <- $zookeeper-image-tag
+      type: string
+    ZOO_MY_ID:
+      env: ZOO_MY_ID
+      type: int
+      value: 3
+    ZOO_SERVERS:
+      env: ZOO_SERVERS
+      type: string
+      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+    ZOO_4LW_COMMANDS_WHITELIST:
+      env: ZOO_4LW_COMMANDS_WHITELIST
+      type: string
+      value: "mntr, conf, ruok"
+    ZOO_CFG_EXTRA:
+      env: ZOO_CFG_EXTRA
+      type: string
+      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+                  
