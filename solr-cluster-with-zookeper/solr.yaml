@@ -2,6 +2,11 @@ namespace: solr-zookeeper
 
 solr1:
   defines: runnable
+  # volumes:
+  #   solr-data:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data
   containers:
     defines: containers
     solr:
@@ -11,7 +16,7 @@ solr1:
       ports:
         - 8981:8983
       paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+        - <- `${volume-data}:/var/solr`
   depends:
     wait-for:
       runnables:
@@ -25,13 +30,16 @@ solr1:
       path: /opt/solr/server/solr/solr.xml
       contents: <<< files/solr.xml
   variables:
+    volume-data:
+      type: string
+      value: <- `${monk-volume-path}/solr/soldata`  
     solr-image:
       value: <- $solr-image-tag
       type: string
     zk-host:
       env: ZK_HOST
       value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string      
+      type: string
 
 solr2:
   defines: runnable
@@ -44,7 +52,7 @@ solr2:
       ports:
         - 8982:8983
       paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+        - <- `${volume-data}:/var/solr`
   depends:
     wait-for:
       runnables:
@@ -58,16 +66,20 @@ solr2:
       path: /opt/solr/server/solr/solr.xml
       contents: <<< files/solr.xml
   variables:
+    volume-data:
+      type: string
+      value: <- `${monk-volume-path}/solr/soldata`  
     solr-image:
       value: <- $solr-image-tag
       type: string
     zk-host:
       env: ZK_HOST
       value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string  
+      type: string   
+
 
 solr3:
-  defines: runnable
+  defines: runnable    
   containers:
     defines: containers
     solr:
@@ -77,7 +89,7 @@ solr3:
       ports:
         - 8983:8983
       paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+        - <- `${volume-data}:/var/solr`
   depends:
     wait-for:
       runnables:
@@ -91,6 +103,9 @@ solr3:
       path: /opt/solr/server/solr/solr.xml
       contents: <<< files/solr.xml
   variables:
+    volume-data:
+      type: string
+      value: <- `${monk-volume-path}/solr/soldata`  
     solr-image:
       value: <- $solr-image-tag
       type: string
@@ -110,8 +125,8 @@ zoo1:
       ports:
         - 2181:2181
         - 7000:7000
-        - 2888:2888
-        - 3888:3888
+        - 2888
+        - 3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -134,7 +149,7 @@ zoo1:
       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
 
 zoo2:
-  defines: runnable 
+  defines: runnable  
   containers:
     defines: containers
     zookeeper:
@@ -143,8 +158,8 @@ zoo2:
       ports:
         - 2182:2181
         - 7001:7000
-        - 2889:2888
-        - 3889:3888
+        - 2888
+        - 3888        
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -177,8 +192,8 @@ zoo3:
       ports:
         - 2183:2181
         - 7002:7000
-        - 2890:2888
-        - 3890:3888
+        - 2888
+        - 3888        
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -198,12 +213,4 @@ zoo3:
     ZOO_CFG_EXTRA:
       env: ZOO_CFG_EXTRA
       type: string
-      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
-
-telnet:
-  defines: runnable  
-  containers:
-    defines: containers
-    zookeeper:
-      image:  docker.io/mikesplain/telnet
-      bash: "sleep 9999999"
+      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"

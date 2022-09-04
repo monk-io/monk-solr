@@ -18,7 +18,9 @@ stack:
     - solr-zookeeper/zoo1
     - solr-zookeeper/zoo2
     - solr-zookeeper/zoo3
-    - solr-zookeeper/telnet
+    # - solr-zookeeper/telnet
   variables:
     solr-image-tag: "latest"
-    zookeeper-image-tag: "3.6.2"
+    zookeeper-image-tag: "3.8.0"
+    persistent-volume-disk-size: 10
+    persistent-volume-disk-kind: "HDD"
