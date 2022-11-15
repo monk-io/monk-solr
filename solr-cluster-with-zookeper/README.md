@@ -18,7 +18,7 @@ monk login --email=<email> --password=<password>
 
 In order to load templates and change configuration simply use below commands: 
 ```bash
-git clone https://github.com/kaganmersin/monk-solr
+git clone https://github.com/monk-io/monk-solr
 
 # and change directory to the monk-solr/solr-cluster-with-zookeeper template folder
 cd monk-solr/solr-cluster-with-zookeeper
