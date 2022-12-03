@@ -19,8 +19,8 @@ solr:
       user: "8983"
       ports:
         - 8983:8983
-      paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`
+      # paths:
+      #   - <- `${monk-volume-path}/solr/soldata:/var/solr`
   files:
     solr-config:
       container: solr
@@ -32,4 +32,22 @@ solr:
       value: <- $solr-image-tag
       type: string      
 
+telnet:
+  defines: runnable
+  containers:
+    defines: containers
+    telnet:
+      image: praqma/network-multitool:latest
+      ports:
+        - 1180
+        - 11443 
+  variables:
+    master-internal-host-name:
+      env: MASTER_INTERNAL_HOST_NAME
+      type: string
+      value: <- get-hostname("solr/solr", "solr") split(".dns.podman") join("") concat-all
+    node-public-ip-address:
+      env: NODE_PUBLIC_IP_ADRESS
+      value: <- ip-address-public
+      type: string  
       

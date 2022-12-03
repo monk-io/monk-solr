@@ -1,85 +1,33 @@
 namespace: solr-zookeeper
 
-solr1:
+solr:
   defines: runnable
   # volumes:
   #   solr-data:
   #     size: <- $persistent-volume-disk-size
   #     kind: <- $persistent-volume-disk-kind
   #     path: <- $volume-data
-  containers:
-    defines: containers
+  scale:
+    value: 3
+  services:
     solr:
-      image:  docker.io/solr
-      image-tag: <- `${solr-image}`
-      user: "8983"
-      ports:
-        - 8981:8983
-      paths:
-        - <- `${volume-data}:/var/solr`
-  depends:
-    wait-for:
-      runnables:
-        - solr-zookeeper/zoo1 
-        - solr-zookeeper/zoo2
-        - solr-zookeeper/zoo3
-  files:
-    solr-config:
       container: solr
-      mode: 0644
-      path: /opt/solr/server/solr/solr.xml
-      contents: <<< files/solr.xml
-  variables:
-    volume-data:
-      type: string
-      value: <- `${monk-volume-path}/solr/soldata`  
-    solr-image:
-      value: <- $solr-image-tag
-      type: string
-    zk-host:
-      env: ZK_HOST
-      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string
-
-solr2:
-  defines: runnable
-  containers:
-    defines: containers
-    solr:
-      image:  docker.io/solr
-      image-tag: <- `${solr-image}`
-      user: "8983"
-      ports:
-        - 8982:8983
-      paths:
-        - <- `${volume-data}:/var/solr`
-  depends:
-    wait-for:
-      runnables:
-        - solr-zookeeper/zoo1 
-        - solr-zookeeper/zoo2
-        - solr-zookeeper/zoo3
-  files:
-    solr-config:
-      container: solr
-      mode: 0644
-      path: /opt/solr/server/solr/solr.xml
-      contents: <<< files/solr.xml
-  variables:
-    volume-data:
-      type: string
-      value: <- `${monk-volume-path}/solr/soldata`  
-    solr-image:
-      value: <- $solr-image-tag
-      type: string
-    zk-host:
-      env: ZK_HOST
-      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string   
-
-
-solr3:
-  defines: runnable    
+      port: 8983
+      protocol: tcp
+      host-port: 8983
+  connections:
+      solr:
+        runnable: solr-zookeeper/solr
+        service: solr
+      zookeeper-1:
+        runnable: solr-zookeeper/zookeeper-1
+        service: zookeeper  
+      zookeeper-2:
+        runnable: solr-zookeeper/zookeeper-2
+        service: zookeeper
+      zookeeper-3:
+        runnable: solr-zookeeper/zookeeper-3
+        service: zookeeper                                           
   containers:
     defines: containers
     solr:
@@ -93,9 +41,9 @@ solr3:
   depends:
     wait-for:
       runnables:
-        - solr-zookeeper/zoo1 
-        - solr-zookeeper/zoo2
-        - solr-zookeeper/zoo3
+        - solr-zookeeper/zookeeper-1 
+        - solr-zookeeper/zookeeper-2
+        - solr-zookeeper/zookeeper-3
   files:
     solr-config:
       container: solr
@@ -111,12 +59,36 @@ solr3:
       type: string
     zk-host:
       env: ZK_HOST
-      value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string  
+      value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
+      type: string
+    # zookeeper-service:
+    #   env: ZK_HOST
+    #   value: <- connection-hostname("zookeeper") ":" connection-port("zookeeper") concat-all
+    #   type: string
 
 
-zoo1:
+
+zookeeper-1:
   defines: runnable
+  services:
+    zookeeper:
+      container: zookeeper
+      port: 2181
+      protocol: tcp
+      host-port: 2181
+  connections:
+      solr:
+        runnable: solr-zookeeper/solr
+        service: solr
+      zookeeper-1:
+        runnable: solr-zookeeper/zookeeper-1
+        service: zookeeper        
+      zookeeper-2:
+        runnable: solr-zookeeper/zookeeper-2
+        service: zookeeper
+      zookeeper-3:
+        runnable: solr-zookeeper/zookeeper-3
+        service: zookeeper          
   containers:
     defines: containers
     zookeeper:
@@ -138,7 +110,7 @@ zoo1:
     ZOO_SERVERS:
       env: ZOO_SERVERS
       type: string
-      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+      value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
     ZOO_4LW_COMMANDS_WHITELIST:
       env: ZOO_4LW_COMMANDS_WHITELIST
       type: string
@@ -148,18 +120,37 @@ zoo1:
       type: string
       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
 
-zoo2:
-  defines: runnable  
+zookeeper-2:
+  defines: runnable
+  services:
+    zookeeper:
+      container: zookeeper
+      port: 2181
+      protocol: tcp
+      host-port: 2181
+  connections:
+      solr:
+        runnable: solr-zookeeper/solr
+        service: solr
+      zookeeper-1:
+        runnable: solr-zookeeper/zookeeper-1
+        service: zookeeper        
+      zookeeper-2:
+        runnable: solr-zookeeper/zookeeper-2
+        service: zookeeper
+      zookeeper-3:
+        runnable: solr-zookeeper/zookeeper-3
+        service: zookeeper          
   containers:
     defines: containers
     zookeeper:
       image:  docker.io/zookeeper
       image-tag: <- `${zookeeper-image}`
       ports:
-        - 2182:2181
-        - 7001:7000
+        - 2181:2181
+        - 7000:7000
         - 2888
-        - 3888        
+        - 3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -171,7 +162,7 @@ zoo2:
     ZOO_SERVERS:
       env: ZOO_SERVERS
       type: string
-      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+      value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
     ZOO_4LW_COMMANDS_WHITELIST:
       env: ZOO_4LW_COMMANDS_WHITELIST
       type: string
@@ -181,19 +172,37 @@ zoo2:
       type: string
       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
 
-
-zoo3:
+zookeeper-3:
   defines: runnable
+  services:
+    zookeeper:
+      container: zookeeper
+      port: 2181
+      protocol: tcp
+      host-port: 2181
+  connections:
+      solr:
+        runnable: solr-zookeeper/solr
+        service: solr
+      zookeeper-1:
+        runnable: solr-zookeeper/zookeeper-1
+        service: zookeeper
+      zookeeper-2:
+        runnable: solr-zookeeper/zookeeper-2
+        service: zookeeper
+      zookeeper-3:
+        runnable: solr-zookeeper/zookeeper-3
+        service: zookeeper     
   containers:
     defines: containers
     zookeeper:
       image:  docker.io/zookeeper
       image-tag: <- `${zookeeper-image}`
       ports:
-        - 2183:2181
-        - 7002:7000
+        - 2181:2181
+        - 7000:7000
         - 2888
-        - 3888        
+        - 3888
   variables:
     zookeeper-image:
       value: <- $zookeeper-image-tag
@@ -205,7 +214,7 @@ zoo3:
     ZOO_SERVERS:
       env: ZOO_SERVERS
       type: string
-      value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+      value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
     ZOO_4LW_COMMANDS_WHITELIST:
       env: ZOO_4LW_COMMANDS_WHITELIST
       type: string
@@ -213,4 +222,274 @@ zoo3:
     ZOO_CFG_EXTRA:
       env: ZOO_CFG_EXTRA
       type: string
-      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
+      value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+
+# solr2:
+#   defines: runnable
+#   containers:
+#     defines: containers
+#     solr:
+#       image:  docker.io/solr
+#       image-tag: <- `${solr-image}`
+#       user: "8983"
+#       ports:
+#         - 8982:8983
+#       paths:
+#         - <- `${volume-data}:/var/solr`
+#   depends:
+#     wait-for:
+#       runnables:
+#         - solr-zookeeper/zoo1 
+#         - solr-zookeeper/zoo2
+#         - solr-zookeeper/zoo3
+#   files:
+#     solr-config:
+#       container: solr
+#       mode: 0644
+#       path: /opt/solr/server/solr/solr.xml
+#       contents: <<< files/solr.xml
+#   variables:
+#     volume-data:
+#       type: string
+#       value: <- `${monk-volume-path}/solr/soldata`  
+#     solr-image:
+#       value: <- $solr-image-tag
+#       type: string
+#     zk-host:
+#       env: ZK_HOST
+#       value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
+#       type: string   
+
+
+# solr3:
+#   defines: runnable    
+#   containers:
+#     defines: containers
+#     solr:
+#       image:  docker.io/solr
+#       image-tag: <- `${solr-image}`
+#       user: "8983"
+#       ports:
+#         - 8983:8983
+#       paths:
+#         - <- `${volume-data}:/var/solr`
+#   depends:
+#     wait-for:
+#       runnables:
+#         - solr-zookeeper/zoo1 
+#         - solr-zookeeper/zoo2
+#         - solr-zookeeper/zoo3
+#   files:
+#     solr-config:
+#       container: solr
+#       mode: 0644
+#       path: /opt/solr/server/solr/solr.xml
+#       contents: <<< files/solr.xml
+#   variables:
+#     volume-data:
+#       type: string
+#       value: <- `${monk-volume-path}/solr/soldata`  
+#     solr-image:
+#       value: <- $solr-image-tag
+#       type: string
+#     zk-host:
+#       env: ZK_HOST
+#       value: <- get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
+#       type: string  
+
+
+
+# zookeeper:
+#   defines: runnable
+#   scale:
+#     value: 3
+#   services:
+#     zookeeper:
+#       container: zookeeper
+#       port: 2181
+#       protocol: tcp
+#       host-port: 2181
+#   connections:
+#       solr:
+#         runnable: solr-zookeeper/solr
+#         service: solr
+#       zookeeper:
+#         runnable: solr-zookeeper/zookeeper
+#         service: zoo 
+#   containers:
+#     defines: containers
+#     zookeeper:
+#       image:  docker.io/zookeeper
+#       image-tag: <- `${zookeeper-image}`
+#       ports:
+#         - 2181:2181
+#         - 7000:7000
+#         - 2888
+#         - 3888
+#   variables:
+#     zookeeper-image:
+#       value: <- $zookeeper-image-tag
+#       type: string
+#     ZOO_MY_ID:
+#       env: ZOO_MY_ID
+#       type: int
+#       value: 1
+#     ZOO_SERVERS:
+#       env: ZOO_SERVERS
+#       type: string
+#       value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+#     ZOO_4LW_COMMANDS_WHITELIST:
+#       env: ZOO_4LW_COMMANDS_WHITELIST
+#       type: string
+#       value: "mntr, conf, ruok"
+#     ZOO_CFG_EXTRA:
+#       env: ZOO_CFG_EXTRA
+#       type: string
+#       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+# zoo2:
+#   defines: runnable  
+#   containers:
+#     defines: containers
+#     zookeeper:
+#       image:  docker.io/zookeeper
+#       image-tag: <- `${zookeeper-image}`
+#       ports:
+#         - 2182:2181
+#         - 7001:7000
+#         - 2888
+#         - 3888        
+#   variables:
+#     zookeeper-image:
+#       value: <- $zookeeper-image-tag
+#       type: string
+#     ZOO_MY_ID:
+#       env: ZOO_MY_ID
+#       type: int
+#       value: 2
+#     ZOO_SERVERS:
+#       env: ZOO_SERVERS
+#       type: string
+#       value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+#     ZOO_4LW_COMMANDS_WHITELIST:
+#       env: ZOO_4LW_COMMANDS_WHITELIST
+#       type: string
+#       value: "mntr, conf, ruok"
+#     ZOO_CFG_EXTRA:
+#       env: ZOO_CFG_EXTRA
+#       type: string
+#       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"                 
+
+
+# zoo3:
+#   defines: runnable
+#   containers:
+#     defines: containers
+#     zookeeper:
+#       image:  docker.io/zookeeper
+#       image-tag: <- `${zookeeper-image}`
+#       ports:
+#         - 2183:2181
+#         - 7002:7000
+#         - 2888
+#         - 3888        
+#   variables:
+#     zookeeper-image:
+#       value: <- $zookeeper-image-tag
+#       type: string
+#     ZOO_MY_ID:
+#       env: ZOO_MY_ID
+#       type: int
+#       value: 3
+#     ZOO_SERVERS:
+#       env: ZOO_SERVERS
+#       type: string
+#       value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all
+#     ZOO_4LW_COMMANDS_WHITELIST:
+#       env: ZOO_4LW_COMMANDS_WHITELIST
+#       type: string
+#       value: "mntr, conf, ruok"
+#     ZOO_CFG_EXTRA:
+#       env: ZOO_CFG_EXTRA
+#       type: string
+#       value: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
+
+telnet-1:
+  defines: runnable
+  # depends:
+  #   wait-for:
+  #     runnables:
+  #       - mariadb-ha/mariadb-bootstrap
+  connections:
+      solr:
+        runnable: solr-zookeeper/solr
+        service: solr
+      zookeeper-1:
+        runnable: solr-zookeeper/zookeeper-1
+        service: zookeeper
+      zookeeper-2:
+        runnable: solr-zookeeper/zookeeper-2
+        service: zookeeper
+      zookeeper-3:
+        runnable: solr-zookeeper/zookeeper-3
+        service: zookeeper  
+  containers:
+    defines: containers
+    telnet:
+      image: praqma/network-multitool:latest
+      ports:
+        - 1180
+        - 11443 
+  variables:
+    # master-internal-host-name:
+    #   env: MASTER_INTERNAL_HOST_NAME
+    #   type: string
+    #   value: <- get-hostname("mariadb-ha/mariadb-bootstrap", "mariadb") split(".dns.podman") join("") concat-all
+    # master-node-ip-address:
+    #   env: MASTER_NODE_IP_ADRESS
+    #   value: <- peer-ip-address("mariadb-ha/mariadb-bootstrap")
+    #   type: string
+    node-public-ip-address:
+      env: NODE_PUBLIC_IP_ADRESS
+      value: <- ip-address-public
+      type: string
+    zk-host:
+      env: ZK_HOST
+      value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
+      type: string
+    solr-host:
+      env: SOLR_HOST
+      value: <- connection-hostname("solr")
+      type: string      
+
+# telnet-2:
+#   defines: runnable
+#   # depends:
+#   #   wait-for:
+#   #     runnables:
+#   #       - mariadb-ha/mariadb-bootstrap  
+#   containers:
+#     defines: containers
+#     telnet:
+#       image: praqma/network-multitool:latest
+#       ports:
+#         - 1180
+#         - 11443 
+#   variables:
+#     # master-internal-host-name:
+#     #   env: MASTER_INTERNAL_HOST_NAME
+#     #   type: string
+#     #   value: <- get-hostname("mariadb-ha/mariadb-bootstrap", "mariadb") split(".dns.podman") join("") concat-all
+#     # master-node-ip-address:
+#     #   env: MASTER_NODE_IP_ADRESS
+#     #   value: <- peer-ip-address("mariadb-ha/mariadb-bootstrap")
+#     #   type: string
+#     node-public-ip-address:
+#       env: NODE_PUBLIC_IP_ADRESS
+#       value: <- ip-address-public
+#       type: string
+#     ZOO_SERVERS:
+#       env: ZOO_SERVERS
+#       type: string
+#       value: <- "server.1=" get-hostname("solr-zookeeper/zoo1", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.2=" get-hostname("solr-zookeeper/zoo2", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181 " "server.3=" get-hostname("solr-zookeeper/zoo3", "zookeeper") split(".dns.podman") join("") ":2888:3888;2181" concat-all      

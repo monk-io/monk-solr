@@ -4,6 +4,7 @@ stack:
   defines: process-group
   runnable-list:
     - solr/solr
+    - solr/telnet    
   variables:
     solr-image-tag: "latest"
 
