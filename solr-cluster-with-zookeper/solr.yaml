@@ -36,6 +36,7 @@ solr-common:
       user: "8983"
       ports:
         - 8983:8983
+        # - 8983
       paths:
         - <- `${volume-data}:/var/solr`
   depends:
@@ -70,6 +71,11 @@ solr-common:
 
 zookeeper-common:
   defines: runnable
+  readiness:
+      code: |
+          exec("zookeeper", "/usr/bin/bash", "-c", "echo 'ruok' | nc -w 2 localhost 2181 | grep imok") "imok" contains?
+      period: 10
+      initialDelay: 5  
   services:
     zookeeper:
       container: zookeeper
@@ -100,12 +106,20 @@ zookeeper-common:
     zookeeper:
       image:  docker.io/zookeeper
       image-tag: <- `${zookeeper-image}`
+      paths:
+        - <- `${volume-data}/data:/data`
+        - <- `${volume-data}/datalog:/datalog`
       ports:
-        - 2181:2181
-        - 7000:7000
+        # - 2181:2181
+        # - 7000:7000
+        - 2181
+        - 7000 
         - 2888
         - 3888
   variables:
+    volume-data:
+      type: string
+      value: <- `${monk-volume-path}/zookeper`  
     zookeeper-image:
       value: <- $zookeeper-image-tag
       type: string
@@ -129,15 +143,15 @@ zookeeper-common:
       env: zookeeper_host_containers
       value: <- get-hostname("solr-zookeeper/zookeeper-1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
       type: string
-      
+
 solr-1:
   defines: runnable
-  inherits: ./solr-common  
-  volumes:
-    solr-1:
-      size: <- $persistent-volume-disk-size
-      kind: <- $persistent-volume-disk-kind
-      path: <- $volume-data  
+  inherits: ./solr-common
+  # volumes:
+  #   solr-1:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -146,12 +160,12 @@ solr-1:
 
 solr-2:
   defines: runnable
-  inherits: ./solr-common  
-  volumes:
-    solr-2:
-      size: <- $persistent-volume-disk-size
-      kind: <- $persistent-volume-disk-kind
-      path: <- $volume-data  
+  inherits: ./solr-common
+  # volumes:
+  #   solr-2:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -160,12 +174,12 @@ solr-2:
 
 solr-3:
   defines: runnable
-  inherits: ./solr-common  
-  volumes:
-    solr-2:
-      size: <- $persistent-volume-disk-size
-      kind: <- $persistent-volume-disk-kind
-      path: <- $volume-data  
+  inherits: ./solr-common
+  # volumes:
+  #   solr-3:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -175,6 +189,11 @@ solr-3:
 zookeeper-1:
   defines: runnable
   inherits: ./zookeeper-common
+  # volumes:
+  #   zookeper-1:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -184,6 +203,11 @@ zookeeper-1:
 zookeeper-2:
   defines: runnable
   inherits: ./zookeeper-common
+  # volumes:
+  #   zookeper-2:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data 
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -193,6 +217,11 @@ zookeeper-2:
 zookeeper-3:
   defines: runnable
   inherits: ./zookeeper-common
+  # volumes:
+  #   zookeper-3:
+  #     size: <- $persistent-volume-disk-size
+  #     kind: <- $persistent-volume-disk-kind
+  #     path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
