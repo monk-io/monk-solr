@@ -6,9 +6,9 @@ solr-common:
   services:
     solr:
       container: zookeeper
-      port: 2181
+      port: 8983
       protocol: tcp
-      host-port: 2181
+      host-port: 8983
   connections:
     solr-1:
       runnable: solr-zookeeper/solr-1
@@ -36,6 +36,7 @@ solr-common:
       user: "8983"
       ports:
         - 8983:8983
+        # - 8983
       paths:
         - <- `${volume-data}:/var/solr`
   depends:
@@ -109,8 +110,10 @@ zookeeper-common:
         - <- `${volume-data}/data:/data`
         - <- `${volume-data}/datalog:/datalog`
       ports:
-        - 2181:2181
-        - 7000:7000
+        # - 2181:2181
+        # - 7000:7000
+        - 7000
+        - 2181             
         - 2888
         - 3888
   variables:
