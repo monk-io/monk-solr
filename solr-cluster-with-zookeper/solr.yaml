@@ -61,11 +61,14 @@ solr-common:
       env: ZK_HOST
       value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
       type: string
-    solr-host:
+    solr-host-1:
       env: SOLR_HOST
       value: <- connection-hostname("solr-1")
       type: string
-
+    node-public-ip-address:
+      env: NODE_PUBLIC_IP_ADRESS
+      value: <- ip-address-public
+      type: string      
 
 
 zookeeper-common:
@@ -105,12 +108,12 @@ zookeeper-common:
     zookeeper:
       image:  docker.io/zookeeper
       image-tag: <- `${zookeeper-image}`
-      # paths:
-      #   - <- `${volume-data}/data:/data`
-      #   - <- `${volume-data}/datalog:/datalog`
+      paths:
+        - <- `${volume-data}/data:/data`
+        - <- `${volume-data}/datalog:/datalog`
       ports:
         - 2181:2181
-        - 7000:7000        
+        - 7000:7000 
         - 2888
         - 3888
   variables:
@@ -186,11 +189,11 @@ solr-3:
 zookeeper-1:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-1:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data  
+  volumes:
+    zookeper-1:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -200,11 +203,11 @@ zookeeper-1:
 zookeeper-2:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-2:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data 
+  volumes:
+    zookeper-2:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data 
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -214,11 +217,11 @@ zookeeper-2:
 zookeeper-3:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-3:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data  
+  volumes:
+    zookeper-3:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
