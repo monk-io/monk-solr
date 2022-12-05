@@ -36,7 +36,6 @@ solr-common:
       user: "8983"
       ports:
         - 8983:8983
-        # - 8983
       paths:
         - <- `${volume-data}:/var/solr`
   depends:
@@ -110,10 +109,8 @@ zookeeper-common:
         - <- `${volume-data}/data:/data`
         - <- `${volume-data}/datalog:/datalog`
       ports:
-        # - 2181:2181
-        # - 7000:7000
-        - 2181
-        - 7000 
+        - 2181:2181
+        - 7000:7000
         - 2888
         - 3888
   variables:
@@ -147,11 +144,11 @@ zookeeper-common:
 solr-1:
   defines: runnable
   inherits: ./solr-common
-  # volumes:
-  #   solr-1:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data
+  volumes:
+    solr-1:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -161,11 +158,11 @@ solr-1:
 solr-2:
   defines: runnable
   inherits: ./solr-common
-  # volumes:
-  #   solr-2:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data
+  volumes:
+    solr-2:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -175,11 +172,11 @@ solr-2:
 solr-3:
   defines: runnable
   inherits: ./solr-common
-  # volumes:
-  #   solr-3:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data
+  volumes:
+    solr-3:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data
   variables:
     solr-host:
       env: SOLR_HOST
@@ -189,11 +186,11 @@ solr-3:
 zookeeper-1:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-1:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data  
+  volumes:
+    zookeper-1:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -203,11 +200,11 @@ zookeeper-1:
 zookeeper-2:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-2:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data 
+  volumes:
+    zookeper-2:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data 
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -217,11 +214,11 @@ zookeeper-2:
 zookeeper-3:
   defines: runnable
   inherits: ./zookeeper-common
-  # volumes:
-  #   zookeper-3:
-  #     size: <- $persistent-volume-disk-size
-  #     kind: <- $persistent-volume-disk-kind
-  #     path: <- $volume-data  
+  volumes:
+    zookeper-3:
+      size: <- $persistent-volume-disk-size
+      kind: <- $persistent-volume-disk-kind
+      path: <- $volume-data  
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
