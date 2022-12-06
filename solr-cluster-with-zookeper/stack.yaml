@@ -17,7 +17,8 @@ stack:
     - solr-zookeeper/solr-3
     - solr-zookeeper/zookeeper-1
     - solr-zookeeper/zookeeper-2
-    - solr-zookeeper/zookeeper-3
+    # - solr-zookeeper/zookeeper-3
+    # - solr-zookeeper/telnet-1    
   variables:
     solr-image-tag: "latest"
     zookeeper-image-tag: "3.8.0"
