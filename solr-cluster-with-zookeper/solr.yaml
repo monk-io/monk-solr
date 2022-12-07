@@ -35,15 +35,15 @@ solr-common:
       image-tag: <- `${solr-image}`
       user: "8983"
       ports:
-        - 8983:8983
+        - 8983
       paths:
         - <- `${volume-data}:/var/solr`
-  # depends:
-  #   wait-for:
-  #     runnables:
-  #       - solr-zookeeper/zookeeper-1 
-  #       - solr-zookeeper/zookeeper-2
-  #       - solr-zookeeper/zookeeper-3
+  depends:
+    wait-for:
+      runnables:
+        - solr-zookeeper/zookeeper-1 
+        - solr-zookeeper/zookeeper-2
+        - solr-zookeeper/zookeeper-3
   files:
     solr-config:
       container: solr
@@ -69,17 +69,17 @@ solr-common:
 
 zookeeper-common:
   defines: runnable
-  # readiness:
-  #     code: |
-  #         exec("zookeeper", "/usr/bin/bash", "-c", "echo 'ruok' | nc -w 2 localhost 2181 | grep imok") "imok" contains?
-  #     period: 10
-  #     initialDelay: 5  
+  readiness:
+      code: |
+          exec("zookeeper", "/usr/bin/bash", "-c", "echo 'ruok' | nc -w 2 localhost 2181 | grep imok") "imok" contains?
+      period: 10
+      initialDelay: 5  
   services:
     zookeeper:
       container: zookeeper
       port: 2181
       protocol: tcp
-      host-port: 2181
+      # host-port: 2181
   connections:
     solr-1:
       runnable: solr-zookeeper/solr-1
@@ -108,10 +108,8 @@ zookeeper-common:
         - <- `${volume-data}/data:/data`
         - <- `${volume-data}/datalog:/datalog`
       ports:
-        - 2181:2181
-        - 7000:7000 
-        # - 2181
-        # - 7000
+        - 2181
+        - 7000
         - 2888
         - 3888
   variables:
@@ -128,8 +126,7 @@ zookeeper-common:
     ZOO_SERVERS:
       env: ZOO_SERVERS
       type: string
-      value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " concat-all
-      # value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
+      value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
     ZOO_4LW_COMMANDS_WHITELIST:
       env: ZOO_4LW_COMMANDS_WHITELIST
       type: string
