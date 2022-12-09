@@ -5,7 +5,7 @@ solr-common:
   defines: runnable
   services:
     solr:
-      container: zookeeper
+      container: solr
       port: 8983
       protocol: tcp
       host-port: 8983
