@@ -1,10 +1,10 @@
 namespace: solr
 
 stack:
-  defines: process-group
+  defines: process-group 
   runnable-list:
-    - solr/solr
+    - solr/solr   
   variables:
-    solr-image-tag: "latest"
-
-    
+    solr-image-tag: 
+      value: "latest"
+      type: string

@@ -12,15 +12,14 @@ stack:
     publisher: "monk.io"
     icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png  
   runnable-list:
-    - solr-zookeeper/solr1
-    - solr-zookeeper/solr2
-    - solr-zookeeper/solr3
-    - solr-zookeeper/zoo1
-    - solr-zookeeper/zoo2
-    - solr-zookeeper/zoo3
-    # - solr-zookeeper/telnet
+    - solr-zookeeper/solr-1
+    - solr-zookeeper/solr-2
+    - solr-zookeeper/solr-3
+    - solr-zookeeper/zookeeper-1
+    - solr-zookeeper/zookeeper-2
+    - solr-zookeeper/zookeeper-3 
   variables:
     solr-image-tag: "latest"
     zookeeper-image-tag: "3.8.0"
-    persistent-volume-disk-size: 10
+    persistent-volume-disk-size: 20
     persistent-volume-disk-kind: "HDD"

@@ -30,6 +30,4 @@ solr:
   variables:
     solr-image:
       value: <- $solr-image-tag
-      type: string      
-
-      
+      type: string
