@@ -1,19 +1,10 @@
 namespace: solr
 
 stack:
-  defines: process-group
-  metadata:
-      defines: metadata
-      name: solr
-      description: Solr is a search server built on top of Apache Lucene, an open source, Java-based, information retrieval library. It is designed to drive powerful document retrieval applications - wherever you need to serve data to users based on their queries, Solr can work for you.
-      tags: self hosted, search platform, 
-      website: https://solr.apache.org/
-      source: https://github.com/apache/solr
-      publisher: "monk.io"
-      icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png    
+  defines: process-group 
   runnable-list:
     - solr/solr   
   variables:
-    solr-image-tag: "latest"
-
-    
+    solr-image-tag: 
+      value: "latest"
+      type: string

@@ -61,14 +61,16 @@ solr-common:
       env: ZK_HOST
       value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
       type: string
-    solr-host-1:
+    solr-host:
       env: SOLR_HOST
       value: <- connection-hostname("solr-1")
       type: string     
     solr-container-ip:
       env: container_ip
       value: <- get-container-ip("solr-zookeeper/solr-1","solr") 
-      type: string 
+      type: string
+    
+      
 
 zookeeper-common:
   defines: runnable
@@ -141,7 +143,7 @@ zookeeper-common:
     zk-host-container:
       env: zookeeper_host_containers
       value: <- get-hostname("solr-zookeeper/zookeeper-1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-      type: string
+      type: string     
    
 
 solr-1:
@@ -240,57 +242,3 @@ zookeeper-3:
       type: int
       value: 3
 
-
-# telnet-1:
-#   defines: runnable
-#   connections:
-#     solr-1:
-#       runnable: solr-zookeeper/solr-1
-#       service: solr
-#     solr-2:
-#       runnable: solr-zookeeper/solr-2
-#       service: solr
-#     solr-3:
-#       runnable: solr-zookeeper/solr-3
-#       service: solr 
-#     zookeeper-1:
-#       runnable: solr-zookeeper/zookeeper-1
-#       service: zookeeper
-#     zookeeper-2:
-#       runnable: solr-zookeeper/zookeeper-2
-#       service: zookeeper
-#     zookeeper-3:
-#       runnable: solr-zookeeper/zookeeper-3
-#       service: zookeeper
-#   containers:
-#     defines: containers
-#     telnet:
-#       image: praqma/network-multitool:latest
-#       ports:
-#         - 1180
-#         - 11443 
-#   variables:
-#     master-node-ip-address:
-#       env: MASTER_NODE_IP_ADRESS
-#       value: <- peer-ip-address("solr-zookeeper/zookeeper-3")
-#       type: string
-#     node-public-ip-address:
-#       env: NODE_PUBLIC_IP_ADRESS
-#       value: <- ip-address-public
-#       type: string
-#     zk-host-svc:
-#       env: ZK_HOST
-#       value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
-#       type: string
-#     solr-host:
-#       env: SOLR_HOST
-#       value: <- connection-hostname("solr-1")
-#       type: string
-#     zk-host-container:
-#       env: ZK_HOST
-#       value: <- get-hostname("solr-zookeeper/zookeeper-1", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-2", "zookeeper") split(".dns.podman") join("") ":2181," get-hostname("solr-zookeeper/zookeeper-3", "zookeeper") split(".dns.podman") join("") ":2181" concat-all
-#       type: string
-#     ZOO_SERVERS:
-#       env: ZOO_SERVERS
-#       type: string
-#       value: <- "server.1=" connection-hostname("zookeeper-1") ":2888:3888;2181" " " "server.2=" connection-hostname("zookeeper-2") ":2888:3888;2181" " " "server.3=" connection-hostname("zookeeper-3") ":2888:3888;2181" concat-all
