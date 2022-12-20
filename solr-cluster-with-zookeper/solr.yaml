@@ -148,7 +148,7 @@ zookeeper-common:
 
 solr-1:
   defines: runnable
-  inherits: ./solr-common
+  inherits: solr-zookeeper/solr-common
   volumes:
     solr-1:
       size: <- $persistent-volume-disk-size
@@ -166,7 +166,7 @@ solr-1:
 
 solr-2:
   defines: runnable
-  inherits: ./solr-common
+  inherits: solr-zookeeper/solr-common
   volumes:
     solr-2:
       size: <- $persistent-volume-disk-size
@@ -184,7 +184,7 @@ solr-2:
 
 solr-3:
   defines: runnable
-  inherits: ./solr-common
+  inherits: solr-zookeeper/solr-common
   volumes:
     solr-3:
       size: <- $persistent-volume-disk-size
@@ -202,7 +202,7 @@ solr-3:
 
 zookeeper-1:
   defines: runnable
-  inherits: ./zookeeper-common
+  inherits: solr-zookeeper/zookeeper-common
   volumes:
     zookeper-1:
       size: <- $persistent-volume-disk-size
@@ -216,7 +216,7 @@ zookeeper-1:
 
 zookeeper-2:
   defines: runnable
-  inherits: ./zookeeper-common
+  inherits: solr-zookeeper/zookeeper-common
   volumes:
     zookeper-2:
       size: <- $persistent-volume-disk-size
@@ -230,7 +230,7 @@ zookeeper-2:
 
 zookeeper-3:
   defines: runnable
-  inherits: ./zookeeper-common
+  inherits: solr-zookeeper/zookeeper-common
   volumes:
     zookeper-3:
       size: <- $persistent-volume-disk-size
