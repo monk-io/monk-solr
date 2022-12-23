@@ -59,7 +59,7 @@ solr-common:
       type: string
     zk-host:
       env: ZK_HOST
-      value: <- connection-hostname("zookeeper-1") ":2181," connection-hostname("zookeeper-2") ":2181," connection-hostname("zookeeper-3") ":2181" concat-all
+      value: <- connection-hostname("zookeeper-1") ":" connection-port("zookeeper-1") "," connection-hostname("zookeeper-2") ":" connection-port("zookeeper-2") "," connection-hostname("zookeeper-3") ":" connection-port("zookeeper-3") concat-all
       type: string
     solr-host:
       env: SOLR_HOST
