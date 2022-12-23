@@ -3,7 +3,7 @@ namespace: solr
 stack:
   defines: process-group 
   runnable-list:
-    - solr/solr   
+    - solr/solr 
   variables:
     solr-image-tag: 
       value: "latest"

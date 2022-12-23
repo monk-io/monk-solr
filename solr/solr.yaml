@@ -11,6 +11,12 @@ solr:
     source: https://github.com/apache/solr
     publisher: "monk.io"
     icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
+  services:
+    solr:
+      container: solr
+      port: 8983
+      protocol: tcp
+      host-port: 8983    
   containers:
     defines: containers
     solr:
