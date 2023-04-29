@@ -2,10 +2,9 @@
 
 This repository contains Monk.io template to deploy Solr system either locally or on cloud of your choice (AWS, GCP, Azure, Digital Ocean).
 
-
 ## Start
 
-Set up Monk - https://docs.monk.io/docs/monk-in-10/
+Set up Monk - [https://docs.monk.io/docs/monk-in-10/](https://docs.monk.io/docs/monk-in-10/)
 
 Start `monkd` and login.
 
@@ -15,7 +14,8 @@ monk login --email=<email> --password=<password>
 
 ## Clone Monk solr repository
 
-In order to load templates and change configuration simply use below commands: 
+In order to load templates and change configuration simply use below commands:
+
 ```bash
 git clone https://github.com/monk-io/monk-solr
 
@@ -34,29 +34,24 @@ The current variables can be found in `stack.yaml/variables` section
     solr-image-tag: "latest"
 ```
 
-### Solr configuration file
+## Solr configuration file
 
 You can find configuration file (solr.xml) in `/files` directory in repository and can edit before the running kit.
 
+| Configuration File | Format Used | Directory in Container           | Purpose                                                                                      |
+| ------------------ | ----------- | -------------------------------- | -------------------------------------------------------------------------------------------- |
+| **solr.xml**       | XML         | `/opt/solr/server/solr/solr.xml` | The solr.xml file defines some global configuration options that apply to all or many cores. |
 
-| Configuration File	 | Format Used | Directory in Container | Purpose 
-|----------|-------------|------|---------|
-| **solr.xml** | XML | `/opt/solr/server/solr/solr.xml` | The solr.xml file defines some global configuration options that apply to all or many cores.
+## Template variables
 
-
-##  Template variables
-
-| Variable | Description | Type | Example |
-|----------|-------------|------|---------|
-| **solr-image-tag** | Solr image version. | string | latest |
-
-
-
+| Variable           | Description         | Type   | Example |
+| ------------------ | ------------------- | ------ | ------- |
+| **solr-image-tag** | Solr image version. | string | latest  |
 
 ## Local Deployment
 
-First clone the repository and simply run below command after launching `monkd`:
-:
+| First clone the repository and simply run below command after launching `monkd`: |
+| :------------------------------------------------------------------------------: |
 
 ```bash
 ➜  monk load MANIFEST
@@ -84,8 +79,7 @@ group     solr/stack  local       -        -
 
 ```
 
-This will start the entire solr/stack. 
-
+This will start the entire solr/stack.
 
 ## Cloud Deployment
 
@@ -128,6 +122,7 @@ Your cluster has been created successfully.
 ```
 
 Once cluster is ready execute the same command as for local and select your cluster (the option will appear automatically).
+
 ```bash
 ➜  monk load MANIFEST
 
