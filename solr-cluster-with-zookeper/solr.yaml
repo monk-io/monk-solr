@@ -66,7 +66,7 @@ solr-common:
       value: <- connection-hostname("solr-1")
       type: string
     persistent-volume-disk-size:
-      type: string
+      type: int
       value: 20
     persistent-volume-disk-kind:
       type: string
@@ -160,7 +160,7 @@ zookeeper-common:
       type: string
       value: metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true
     persistent-volume-disk-size:
-      type: string
+      type: int
       value: 20
     persistent-volume-disk-kind:
       type: string

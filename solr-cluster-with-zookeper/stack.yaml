@@ -23,6 +23,7 @@ stack:
     source: https://github.com/apache/solr
     publisher: monk.io
     icon: https://norconex.com/wp-content/uploads/Solr_Logo_on_white_web.png
+    private: true
   runnable-list:
     - solr-zookeeper/solr-1
     - solr-zookeeper/solr-2
