@@ -8,15 +8,10 @@ base:
     shortname: solr
     description: |
       Apache Solr is a popular, open-source enterprise search platform that provides fast and scalable full-text search capabilities.
-
       Built on top of the Apache Lucene search library, Solr offers a wide range of features and functionalities for indexing, searching, and analyzing large volumes of data.
-
       It is highly scalable, with support for distributed search and indexing, and can be used in a variety of applications, including e-commerce, content management systems (CMS), and big data analytics.
-
       Solr provides advanced search features such as faceted search, which allows users to refine search results based on specific criteria, and text analysis, which can help identify relevant information from unstructured data.
-
       It also offers support for document management, enabling users to search and retrieve content from a wide range of file formats.
-
       Overall, Solr is a powerful and flexible search platform that can be used to build fast and effective search solutions for enterprise-level applications.
     tags: Search engine, Full-text search, Indexing, Apache Lucene, Open source, Scalability, High performance, Faceted search, Apache Software Foundation, Text analysis, Document management, E-commerce, Content management systems (CMS), Big data, Enterprise search
     website: https://solr.apache.org/
@@ -27,13 +22,19 @@ base:
   containers:
     solr:
       image: solr
-      image-tag: latest
+      image-tag: <- `${solr-image-tag}`
+      paths:
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`   
   files:
     solr-config:
       container: solr
       mode: 0644
       path: /opt/solr/server/solr/solr.xml
       contents: <<< files/solr.xml
+  variables:
+    solr-image-tag:
+      value: latest
+      type: string
 
 solr:
   defines: runnable
@@ -46,10 +47,6 @@ solr:
       port: 8983
       protocol: tcp
       host-port: 8983
-  containers:
-    solr:
-      paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`
   files:
     solr-config:
       container: solr
@@ -57,6 +54,6 @@ solr:
       path: /opt/solr/server/solr/solr.xml
       contents: <<< files/solr.xml
   variables:
-    solr-image:
+    solr-image-tag:
       value: latest
       type: string
