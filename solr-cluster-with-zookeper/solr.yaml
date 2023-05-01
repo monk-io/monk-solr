@@ -34,8 +34,6 @@ solr-common:
       image:  docker.io/solr
       image-tag: <- `${solr-image}`
       user: "8983"
-      ports:
-        - 8983:8983
       paths:
         - <- `${volume-data}:/var/solr`
   depends:
@@ -109,11 +107,6 @@ zookeeper-common:
       paths:
         - <- `${volume-data}/data:/data`
         - <- `${volume-data}/datalog:/datalog`
-      ports:
-        - 2181
-        - 7000
-        - 2888
-        - 3888
   variables:
     volume-data:
       type: string
