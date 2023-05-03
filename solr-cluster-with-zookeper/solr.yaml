@@ -55,7 +55,7 @@ solr-common:
       value: <- connection-hostname("solr-1")
       type: string
     persistent-volume-disk-capacity:
-      value: <- $persistent-volume-disk-size default("10")
+      value: <- $persistent-volume-disk-size default(10)
       type: int
     persistent-volume-disk-type:
       value: <- $persistent-volume-disk-kind default("HDD")
@@ -153,7 +153,7 @@ solr-1:
       value: <- connection-hostname("solr-1")
       type: string
     persistent-volume-disk-capacity:
-      value: <- $persistent-volume-disk-size default("10")
+      value: <- $persistent-volume-disk-size default(10)
       type: int
     persistent-volume-disk-type:
       value: <- $persistent-volume-disk-kind default("HDD")
@@ -173,7 +173,7 @@ solr-2:
       value: <- connection-hostname("solr-2")
       type: string
     persistent-volume-disk-capacity:
-      value: <- $persistent-volume-disk-size default("10")
+      value: <- $persistent-volume-disk-size default(10)
       type: int
     persistent-volume-disk-type:
       value: <- $persistent-volume-disk-kind default("HDD")
@@ -193,7 +193,7 @@ solr-3:
       value: <- connection-hostname("solr-3")
       type: string
     persistent-volume-disk-capacity:
-      value: <- $persistent-volume-disk-size default("10")
+      value: <- $persistent-volume-disk-size default(10)
       type: int
     persistent-volume-disk-type:
       value: <- $persistent-volume-disk-kind default("HDD")
@@ -213,7 +213,7 @@ zookeeper:
       type: string
       value: 1
     persistent-volume-disk-capacity:
-      value: <- $persistent-volume-disk-size default("10")
+      value: <- $persistent-volume-disk-size default(10)
       type: int
     persistent-volume-disk-type:
       value: <- $persistent-volume-disk-kind default("HDD")
