@@ -30,10 +30,4 @@ stack:
       value: latest
     zookeeper-image-tag:
       type: string
-      value: 3.8.0  
-    persistent-volume-disk-size:
-      type: int
-      value: 10
-    persistent-volume-disk-kind:
-      type: string
-      value: HDD
+      value: 3.8.0
