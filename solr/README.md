@@ -44,7 +44,7 @@ You can find configuration file (solr.xml) in `/files` directory in repository a
 
 ## Template variables
 
-| Variable           | Description         | Type   | Example |
+| Variable           | Description         | Type   | Default |
 | ------------------ | ------------------- | ------ | ------- |
 | **solr-image-tag** | Solr image version. | string | latest  |
 

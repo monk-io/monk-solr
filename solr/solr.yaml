@@ -24,7 +24,7 @@ base:
       image: solr
       image-tag: <- `${solr-image-tag}`
       paths:
-        - <- `${monk-volume-path}/solr/soldata:/var/solr`   
+        - <- `${monk-volume-path}/solr/soldata:/var/solr`
   files:
     solr-config:
       container: solr
