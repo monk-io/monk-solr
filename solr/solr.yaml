@@ -1,7 +1,7 @@
 ---
 namespace: solr
 
-base:
+solr-common:
   defines: runnable
   metadata:
     name: solr
@@ -38,7 +38,7 @@ base:
 
 solr:
   defines: runnable
-  inherits: solr/base
+  inherits: solr/solr-common
   metadata:
     private: false
   services:

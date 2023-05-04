@@ -42,7 +42,7 @@ solr-common:
       contents: <<< files/solr.xml
   variables:
     solr-image:
-      value: <- `${solr-image-tag}`
+      value: <- `${solr-image-tag}` default("3.8.0")
       type: string
     zk-host:
       env: ZK_HOST
@@ -52,12 +52,11 @@ solr-common:
       env: SOLR_HOST
       value: <- connection-hostname("solr-1")
       type: string
-    solr-image-tag:
-      type: <- $solr-image-tag default("latest")
-      value: latest
 
-zookeeper-base:
+zookeeper-common:
   defines: runnable
+  metadata:
+    private: true
   services:
     server:
       container: zookeeper
@@ -88,8 +87,6 @@ zookeeper-base:
     zookeeper:
       runnable: solr-zookeeper/zookeeper
       service: server
-  metadata:
-    private: true
   readiness:
     code: |
       exec("zookeeper", "/usr/bin/bash", "-c", "echo 'ruok' | nc -w 2 localhost 2181 | grep imok") "imok" contains?
@@ -104,7 +101,7 @@ zookeeper-base:
         - <- `${monk-volume-path}/zookeper/datalog:/datalog`
   variables:
     zookeeper-image:
-      value: <- `${zookeeper-image-tag}`
+      value: <- `${zookeeper-image-tag}` default("latest")
       type: string
     ZOO_MY_ID:
       env: ZOO_MY_ID
@@ -122,13 +119,12 @@ zookeeper-base:
       env: ZOO_CFG_EXTRA
       type: string
       value: metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true
-    zookeeper-image-tag:
-      type: string
-      value: <- $solr-image-tag default("3.8.0")
 
 solr-1:
   defines: runnable
   inherits: solr-zookeeper/solr-common
+  metadata:
+    private: true
   variables:
     solr-host:
       env: SOLR_HOST
@@ -138,6 +134,8 @@ solr-1:
 solr-2:
   defines: runnable
   inherits: solr-zookeeper/solr-common
+  metadata:
+    private: true
   variables:
     solr-host:
       env: SOLR_HOST
@@ -147,6 +145,8 @@ solr-2:
 solr-3:
   defines: runnable
   inherits: solr-zookeeper/solr-common
+  metadata:
+    private: true
   variables:
     solr-host:
       env: SOLR_HOST
@@ -155,7 +155,9 @@ solr-3:
 
 zookeeper:
   defines: runnable
-  inherits: solr-zookeeper/zookeeper-base
+  inherits: solr-zookeeper/zookeeper-common
+  metadata:
+    private: true
   variables:
     ZOO_MY_ID:
       env: ZOO_MY_ID
