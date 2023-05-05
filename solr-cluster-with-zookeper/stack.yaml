@@ -23,7 +23,7 @@ stack:
     - solr-zookeeper/solr-1
     - solr-zookeeper/solr-2
     - solr-zookeeper/solr-3
-    - solr-zookeeper/zookeeper-1
+    - solr-zookeeper/zookeeper
   variables:
     solr-image-tag:
       type: string
