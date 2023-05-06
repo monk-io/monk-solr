@@ -1,3 +1,0 @@
-REPO monk-solr
-LOAD solr.yaml
-RESOURCES files/solr.xml
