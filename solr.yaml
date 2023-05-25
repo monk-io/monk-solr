@@ -13,7 +13,7 @@ solr-common:
       Solr provides advanced search features such as faceted search, which allows users to refine search results based on specific criteria, and text analysis, which can help identify relevant information from unstructured data.
       It also offers support for document management, enabling users to search and retrieve content from a wide range of file formats.
       Overall, Solr is a powerful and flexible search platform that can be used to build fast and effective search solutions for enterprise-level applications.
-    tags: Search engine, Full-text search, Indexing, Apache Lucene, Open source, Scalability, High performance, Faceted search, Apache Software Foundation, Text analysis, Document management, E-commerce, Content management systems (CMS), Big data, Enterprise search
+    tags: high performance, apache lucene, document management, enterprise search, text analysis, indexing, e-commerce, big data, search engine, scalability, faceted search, full-text search, open source
     website: https://solr.apache.org/
     source: https://github.com/apache/solr
     publisher: monk.io
