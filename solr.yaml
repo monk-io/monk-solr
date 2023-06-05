@@ -22,7 +22,7 @@ solr-common:
   containers:
     solr:
       image: solr
-      image-tag: <- `${solr-image-tag}`
+      image-tag: <- $solr-image-tag
       paths:
         - <- `${monk-volume-path}/solr/soldata:/var/solr`
   files:
