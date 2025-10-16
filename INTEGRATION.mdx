@@ -1,0 +1,216 @@
+---
+title: Apache Solr
+description: Ready-to-run Apache Solr container template you can run directly or inherit to integrate a powerful search engine into your stack.
+primary_category: search
+tags: [solr, search, lucene, full-text-search, template, runnable, enterprise-search]
+integration_type: template
+hosting_models: [self-hosted]
+website_url: https://solr.apache.org/
+docs_url: https://solr.apache.org/guide/
+publisher: monk.io
+---
+
+## Overview
+
+This template provides a production‑ready Apache Solr instance as a Monk runnable. You can:
+
+- Run it directly to get a managed enterprise search platform with sensible defaults
+- Inherit it in your own runnable to seamlessly add powerful full-text search capabilities to your stack
+
+Apache Solr is a blazing-fast, open-source enterprise search platform built on Apache Lucene. It provides distributed indexing, replication, load-balanced querying, automated failover and recovery, centralized configuration, and more.
+
+## What this template manages
+
+- Solr container (`solr` image, configurable tag)
+- Network service on port 8983
+- Persistent volumes for data and configuration
+- Admin UI and REST API access
+- Schema and configuration management
+
+## Quick start (run directly)
+
+1) Load templates
+
+```bash
+monk load MANIFEST
+```
+
+2) Run Solr with defaults
+
+```bash
+monk run solr/solr
+```
+
+Once started, connect to the Admin UI at `http://localhost:8983/solr/` (or the runnable hostname inside Monk networks).
+
+## Configuration
+
+Key variables you can customize in this template:
+
+```yaml
+variables:
+  solr-image-tag: "latest"  # container image tag
+```
+
+Data is persisted under `${monk-volume-path}/solr/soldata` on the host. Custom Solr configuration is mounted from `files/solr.xml`.
+
+## Use by inheritance (recommended for apps)
+
+Inherit the Solr runnable in your application and declare a connection. Example:
+
+```yaml
+namespace: myapp
+search:
+  defines: runnable
+  inherits: solr/solr
+api:
+  defines: runnable
+  containers:
+    api:
+      image: myorg/api
+  connections:
+    search-engine:
+      runnable: search
+      service: solr
+  variables:
+    solr-host:
+      value: <- connection-hostname("search-engine")
+    solr-port:
+      value: "8983"
+```
+
+Run your app group:
+
+```bash
+monk run myapp/api
+```
+
+## Ports and connectivity
+
+- Service: `solr` on TCP port `8983`
+- From other runnables in the same process group, use `connection-hostname("<connection-name>")` to resolve the Solr host.
+
+## Persistence and configuration
+
+- Data path: `${monk-volume-path}/solr/soldata:/var/solr`
+- Config file: `files/solr.xml` mounted to `/opt/solr/server/solr/solr.xml`
+- Cores, indexes, and configurations are persisted across restarts
+
+## Features
+
+- **Full-Text Search**: Advanced text analysis and search
+- **Faceted Search**: Drill-down navigation
+- **Hit Highlighting**: Show matched terms in context
+- **Real-Time Indexing**: Near-instant document availability
+- **Distributed Search**: SolrCloud for horizontal scaling
+- **Rich Document Support**: PDF, Word, Excel, HTML, etc.
+- **Geospatial Search**: Location-based queries
+- **Spell Checking**: Did-you-mean suggestions
+- **Auto-Suggest**: Type-ahead completions
+- **REST API**: JSON, XML, CSV responses
+
+## Creating a Core
+
+```bash
+# Create a core named "mycollection"
+curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=mycollection&configSet=_default"
+```
+
+Or via Admin UI: Core Admin → Add Core
+
+## Indexing Documents
+
+JSON API:
+
+```bash
+curl -X POST -H 'Content-Type: application/json' \
+  'http://localhost:8983/solr/mycollection/update?commit=true' \
+  -d '[
+    {
+      "id": "1",
+      "title": "Apache Solr",
+      "description": "Enterprise search platform"
+    },
+    {
+      "id": "2",
+      "title": "Elasticsearch",
+      "description": "Distributed search engine"
+    }
+  ]'
+```
+
+## Searching Documents
+
+```bash
+# Simple search
+curl "http://localhost:8983/solr/mycollection/select?q=apache"
+
+# Faceted search
+curl "http://localhost:8983/solr/mycollection/select?q=*:*&facet=true&facet.field=category"
+
+# With filters
+curl "http://localhost:8983/solr/mycollection/select?q=*:*&fq=category:tech"
+```
+
+## Schema Configuration
+
+Define fields and types in `schema.xml` or use the Schema API:
+
+```bash
+# Add field
+curl -X POST -H 'Content-Type: application/json' \
+  'http://localhost:8983/solr/mycollection/schema' \
+  -d '{
+    "add-field": {
+      "name": "price",
+      "type": "pfloat",
+      "indexed": true,
+      "stored": true
+    }
+  }'
+```
+
+## SolrCloud (Distributed Mode)
+
+For production scalability with multiple Solr nodes:
+1. Deploy a ZooKeeper ensemble
+2. Configure Solr nodes to connect to ZooKeeper
+3. Create collections with sharding and replication
+
+```bash
+# Create collection with 2 shards, 2 replicas each
+curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=products&numShards=2&replicationFactor=2"
+```
+
+Refer to the [SolrCloud documentation](https://solr.apache.org/guide/solr/latest/deployment-guide/cluster-types.html) for detailed setup instructions.
+
+## Use cases
+
+Solr excels at:
+- E-commerce product search
+- Enterprise document search
+- Log and event search
+- Geospatial applications
+- Content management systems
+- Knowledge bases
+- Recommendation engines
+
+
+## Related templates
+
+- High‑availability setup: see SolrCloud configuration in the [official Solr documentation](https://solr.apache.org/guide/) for distributed deployments.
+
+## Troubleshooting
+
+- Access Admin UI at `http://localhost:8983/solr/` to check core status and run queries
+- Use the Analysis page in Admin UI to debug search queries and test analyzers
+- Check logs:
+
+```bash
+monk logs -l 500 -f solr/solr
+```
+
+- For indexing issues, verify document format matches your schema definition
+- For performance issues, consider using a custom `solr.xml` configuration with increased JVM heap and cache settings
+- Ensure the host volume is writable by the container user
+- If cores are not loading, verify the `solr.xml` configuration and core definitions
